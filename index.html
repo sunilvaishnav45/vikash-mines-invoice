@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COA – KL05</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #e5e7eb; font-family: Arial, Helvetica, sans-serif; color: #000; }
+  .toolbar { position: sticky; top: 0; z-index: 5; display: flex; gap: 10px; align-items: center; justify-content: center; padding: 10px; background: #1f2937; color: #fff; font-size: 14px; }
+  .toolbar button { padding: 8px 18px; font-size: 14px; border: 0; border-radius: 4px; cursor: pointer; background: #fff; color: #111; }
+  .toolbar button.primary { background: #2563eb; color: #fff; }
+  .page { width: 210mm; min-height: 297mm; margin: 12px auto; padding: 14mm 12mm; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.2); }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  td, th { border: 1px solid #555; padding: 5px 7px; font-size: 13.5px; vertical-align: middle; }
+  .gap { height: 14px; }
+  .center { text-align: center; }
+  .co-name { font-weight: 700; font-size: 17px; text-align: center; }
+  .co-addr { font-weight: 700; font-size: 11px; text-align: center; }
+  .mo { font-weight: 700; font-size: 17px; text-align: center; }
+  .small { font-size: 12px; }
+
+  /* editable fields */
+  [contenteditable] { outline: none; min-height: 1.3em; word-break: break-word; }
+  [contenteditable]:empty::before { content: attr(data-ph); color: #9ca3af; }
+  [contenteditable]:hover { background: #eff6ff; }
+  [contenteditable]:focus { background: #dbeafe; }
+  .res { background: #fffbe6; }
+  .inline { display: inline-block; min-width: 90px; }
+
+  .params th { text-align: left; font-size: 14px; }
+  .params td.sr { text-align: center; width: 9%; }
+  .params td.sp { width: 31%; }
+  .params td.rs { width: 29%; }
+  .params td.pm { width: 31%; }
+  .chem td.k { width: 9%; text-align: center; }
+  .chem td.n { width: 31%; }
+  .chem td.sp { width: 31%; }
+
+  .sign { margin-top: 28px; display: flex; justify-content: flex-end; }
+  .sign-box { width: 260px; text-align: center; font-weight: 700; font-size: 13px; }
+  .sign-space { height: 60px; }
+  .sign-box .line { border-top: 1px solid #555; padding-top: 4px; }
+
+  @media print {
+    body { background: #fff; }
+    .toolbar { display: none; }
+    .page { margin: 0; box-shadow: none; width: 210mm; height: 297mm; min-height: 0; padding: 14mm 12mm; overflow: hidden; page-break-after: avoid; }
+    [contenteditable]:hover, [contenteditable]:focus { background: transparent; }
+    .res { background: transparent; }
+    [contenteditable]:empty::before { content: ""; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span>Click any highlighted Result cell or header field to edit.</span>
+  <button class="primary" onclick="window.print()">Print (A4)</button>
+  <button onclick="clearResults()">Clear results</button>
+</div>
+
+<div class="page">
+
+  <!-- Header block -->
+  <table>
+    <tr>
+      <td style="width:17%" class="small center"><span contenteditable="true" data-ph="GST NO."></span></td>
+      <td style="width:55%">
+        <div class="co-name" contenteditable="true" data-ph="COMPANY NAME"></div>
+        <div class="co-addr" contenteditable="true" data-ph="Company address"></div>
+      </td>
+      <td style="width:28%" class="mo"><span contenteditable="true" data-ph="MO Mobile No."></span></td>
+    </tr>
+  </table>
+  <table style="margin-top:-1px">
+    <tr>
+      <td style="width:35%">INVOICE NO.<span contenteditable="true" class="inline" data-ph="Invoice no."></span></td>
+      <td style="width:25%">BATCH NO.<span contenteditable="true" class="inline" data-ph="Batch ID"></span></td>
+      <td style="width:21%">Date :- <span contenteditable="true" class="inline" data-ph="DD-MM-YYYY"></span></td>
+      <td style="width:19%">COA REPORT.NO.<span contenteditable="true" class="inline" data-ph="No."></span></td>
+    </tr>
+  </table>
+
+  <div class="gap"></div>
+
+  <!-- Sr / Qty -->
+  <table>
+    <tr>
+      <td style="width:9%" class="center">Sr.<br>No.</td>
+      <td style="width:42%" class="center"><span contenteditable="true" data-ph="Sr. no."></span></td>
+      <td style="width:49%" class="center">QTY:<span contenteditable="true" class="inline" data-ph="Quantity (MT)"></span></td>
+    </tr>
+  </table>
+
+  <div class="gap"></div>
+
+  <!-- Parameters -->
+  <table class="params">
+    <thead>
+      <tr>
+        <th class="sr center">Sr.<br>no</th>
+        <th class="pm"></th>
+        <th class="sp">SPECIFICATION</th>
+        <th class="rs">RESULT</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="sr">1</td><td class="pm">Residue 500# (&gt; 35µ) Wet Method</td><td class="sp">&lt;0.2%</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">2</td><td class="pm">Appearance/Tone Test</td>
+        <td class="sp">1. Off-white in dry form and Creamish tone in wet panel<br>2. Δ (Delta) &lt;1</td>
+        <td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">3</td><td class="pm">Brightness (ISO)</td><td class="sp">79.0 Min</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">4</td><td class="pm">PH Value (40% Solid)</td><td class="sp">8.3 to 8.6</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">5</td><td class="pm">PH Value (10% Solid)</td><td class="sp">7.5 - 9.0</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">6</td><td class="pm">Bulk Density (gm/cc) - Untapped</td><td class="sp">0.30 to 0.37</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">7</td><td class="pm">Bulk Density (gm/cc) - Tapped</td><td class="sp">0.41 to 0.48</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">8</td><td class="pm">Specific gravity</td><td class="sp">2.50 - 2.60</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">9</td><td class="pm">Moisture content%</td><td class="sp">2.0% Max.</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">10</td><td class="pm">Oil absorption of powder (gm/100gm)</td><td class="sp">30 – 35</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+      <tr><td class="sr">11</td><td class="pm">Viscosity</td><td class="sp">&lt;750 cps</td><td class="rs"><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+    </tbody>
+  </table>
+
+  <div class="gap"></div>
+
+  <!-- Chemical analysis -->
+  <table class="chem">
+    <tr><td class="k">A</td><td class="n">SiO2</td><td class="sp">46% ± 2</td><td><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+    <tr><td class="k">B</td><td class="n">Al2O3</td><td class="sp">32% ± 2</td><td><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+    <tr><td class="k">C</td><td class="n">L.O.I.</td><td class="sp">14% ± 1</td><td><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
+  </table>
+
+  <!-- Signature -->
+  <div class="sign">
+    <div class="sign-box">
+      <div>For <span contenteditable="true" class="inline" data-ph="Company name"></span></div>
+      <div class="sign-space"></div>
+      <div class="line">Proprietor</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function clearResults() {
+    if (!confirm("Clear all Result cells?")) return;
+    document.querySelectorAll(".res").forEach(function (el) { el.textContent = ""; });
+  }
+  // Paste as plain text only
+  document.addEventListener("paste", function (e) {
+    var t = e.target.closest("[contenteditable]");
+    if (!t) return;
+    e.preventDefault();
+    var text = (e.clipboardData || window.clipboardData).getData("text");
+    document.execCommand("insertText", false, text);
+  });
+</script>
+</body>
+</html>
