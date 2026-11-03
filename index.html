@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>COA – KL05</title>
+<title>Vikash Mines &amp; Mineral</title>
 <style>
   @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
@@ -43,6 +43,10 @@
   .sign-space { height: 60px; }
   .sign-box .line { border-top: 1px solid #555; padding-top: 4px; }
 
+  body.exporting [contenteditable]:empty::before { content: ""; }
+  body.exporting .res { background: transparent; }
+  body.exporting .page { margin: 0; box-shadow: none; width: 210mm; height: 297mm; min-height: 0; overflow: hidden; }
+
   @media print {
     body { background: #fff; }
     .toolbar { display: none; }
@@ -58,6 +62,7 @@
 
 <div class="toolbar">
   <span>Click any highlighted Result cell or header field to edit.</span>
+  <button class="primary" id="pdfBtn" onclick="downloadPDF()">Download PDF</button>
   <button class="primary" onclick="window.print()">Print (A4)</button>
   <button onclick="clearResults()">Clear results</button>
 </div>
@@ -67,12 +72,13 @@
   <!-- Header block -->
   <table>
     <tr>
-      <td style="width:17%" class="small center"><span contenteditable="true" data-ph="GST NO."></span></td>
+      <td style="width:17%" class="small center"><span contenteditable="true" data-ph="GST NO.">GST NO.08DSLPS3276Q1ZL</span></td>
       <td style="width:55%">
-        <div class="co-name" contenteditable="true" data-ph="COMPANY NAME"></div>
-        <div class="co-addr" contenteditable="true" data-ph="Company address"></div>
+        <div class="co-name" contenteditable="true" data-ph="COMPANY NAME">Vikash Mines &amp; Mineral</div>
+        <div class="co-addr" contenteditable="true" data-ph="Company address">Singla Road, Nimbol, Teh Jaitaran (Beawar), Rajasthan 306308</div>
+        <div class="co-addr" contenteditable="true" data-ph="Email">Email: vikashminesandmineral@gmail.com</div>
       </td>
-      <td style="width:28%" class="mo"><span contenteditable="true" data-ph="MO Mobile No."></span></td>
+      <td style="width:28%" class="mo"><span contenteditable="true" data-ph="MO Mobile No.">MO +91 96368 49387</span></td>
     </tr>
   </table>
   <table style="margin-top:-1px">
@@ -128,6 +134,7 @@
 
   <!-- Chemical analysis -->
   <table class="chem">
+    <tr><td colspan="4" class="center" style="font-weight:700;font-size:14px">Chemical Analysis</td></tr>
     <tr><td class="k">A</td><td class="n">SiO2</td><td class="sp">46% ± 2</td><td><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
     <tr><td class="k">B</td><td class="n">Al2O3</td><td class="sp">32% ± 2</td><td><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
     <tr><td class="k">C</td><td class="n">L.O.I.</td><td class="sp">14% ± 1</td><td><div class="res" contenteditable="true" data-ph="Result"></div></td></tr>
@@ -136,7 +143,7 @@
   <!-- Signature -->
   <div class="sign">
     <div class="sign-box">
-      <div>For <span contenteditable="true" class="inline" data-ph="Company name"></span></div>
+      <div>For <span contenteditable="true" class="inline" data-ph="Company name">Vikash Mines &amp; Mineral</span></div>
       <div class="sign-space"></div>
       <div class="line">Proprietor</div>
     </div>
@@ -144,7 +151,36 @@
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
+  function downloadPDF() {
+    if (typeof html2pdf === "undefined") {
+      alert("PDF library could not load (check internet). Use Print (A4) and choose 'Save as PDF'.");
+      return;
+    }
+    var btn = document.getElementById("pdfBtn");
+    var old = btn.textContent;
+    btn.textContent = "Preparing...";
+    btn.disabled = true;
+    document.body.classList.add("exporting");
+    window.scrollTo(0, 0);
+    var batch = (document.querySelector('[data-ph="Batch ID"]').textContent || "").trim();
+    var name = "COA" + (batch ? "_" + batch.replace(/[^\w.-]+/g, "_") : "") + ".pdf";
+    html2pdf().set({
+      margin: 0,
+      filename: name,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+    }).from(document.querySelector(".page")).save().then(function () {
+      document.body.classList.remove("exporting");
+      btn.textContent = old; btn.disabled = false;
+    }).catch(function () {
+      document.body.classList.remove("exporting");
+      btn.textContent = old; btn.disabled = false;
+      alert("Could not create PDF. Use Print (A4) and choose 'Save as PDF'.");
+    });
+  }
   function clearResults() {
     if (!confirm("Clear all Result cells?")) return;
     document.querySelectorAll(".res").forEach(function (el) { el.textContent = ""; });
